@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>PageWise</title>
+<title>Pagewise</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0b0d12">
 <link rel="icon" href="icon-192.png">
@@ -17,14 +17,14 @@ body{background:var(--bg);color:var(--text);font:16px/1.3 system-ui,-apple-syste
 button{font:inherit;color:inherit;cursor:pointer}
 svg{display:block}
 #app{padding:calc(env(safe-area-inset-top,0px) + 14px) clamp(16px,3vw,36px) calc(env(safe-area-inset-bottom,0px) + 120px)}
-#list{display:grid;grid-template-columns:1fr;gap:12px;align-items:start}
-@media(min-width:760px){#list{grid-template-columns:1fr 1fr}#list .card:last-child:nth-child(odd){grid-column:1/-1}}
+#list{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-items:start}
+@media(min-width:760px){#list{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#list .card:last-child:nth-child(odd){grid-column:1/-1}}
 header{display:flex;gap:10px;margin-bottom:18px}
 header .sp{flex:1}
 .ib{width:46px;height:46px;border-radius:50%;border:1px solid color-mix(in srgb,var(--text) 8%,transparent);background:var(--surface);display:grid;place-items:center;padding:0}
 .ib svg{width:22px;height:22px}
 .ib.go{background:var(--accent);border-color:transparent;color:#04130a}
-.card{display:block;width:100%;text-align:left;background:color-mix(in srgb,var(--c) 9%,var(--bg));border:1px solid color-mix(in srgb,var(--c) 24%,transparent);border-radius:26px;padding:16px}
+.card{display:block;min-width:0;max-width:100%;width:100%;text-align:left;background:color-mix(in srgb,var(--c) 9%,var(--bg));border:1px solid color-mix(in srgb,var(--c) 24%,transparent);border-radius:26px;padding:16px}
 .card.done{opacity:.8}
 .row{display:flex;align-items:center;gap:14px}
 .tile{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 20%,var(--bg));color:var(--c);flex:none}
