@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PageWise</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b0d12">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{color-scheme:dark light;--bg:#0b0d12;--surface:#14171e;--surface2:#1d212a;--text:#f3f5f8;--muted:#8b93a1;--accent:#22c55e;--danger:#f0483e}
+@media(prefers-color-scheme:light){:root{--bg:#f3f4f7;--surface:#fff;--surface2:#e8eaef;--text:#12151b;--muted:#6b7380}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--text);font:16px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+svg{display:block}
+#app{padding:calc(env(safe-area-inset-top,0px) + 14px) clamp(16px,3vw,36px) calc(env(safe-area-inset-bottom,0px) + 120px)}
+#list{display:grid;grid-template-columns:1fr;gap:12px;align-items:start}
+@media(min-width:760px){#list{grid-template-columns:1fr 1fr}#list .card:last-child:nth-child(odd){grid-column:1/-1}}
+header{display:flex;gap:10px;margin-bottom:18px}
+header .sp{flex:1}
+.ib{width:46px;height:46px;border-radius:50%;border:1px solid color-mix(in srgb,var(--text) 8%,transparent);background:var(--surface);display:grid;place-items:center;padding:0}
+.ib svg{width:22px;height:22px}
+.ib.go{background:var(--accent);border-color:transparent;color:#04130a}
+.card{display:block;width:100%;text-align:left;background:color-mix(in srgb,var(--c) 9%,var(--bg));border:1px solid color-mix(in srgb,var(--c) 24%,transparent);border-radius:26px;padding:16px}
+.card.done{opacity:.8}
+.row{display:flex;align-items:center;gap:14px}
+.tile{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 20%,var(--bg));color:var(--c);flex:none}
+.tile svg{width:28px;height:28px}
+.tile.lg{width:112px;height:112px;border-radius:32px;margin:0 auto}
+.tile.lg svg{width:54px;height:54px}
+.info{flex:1;min-width:0}
+.t,.s{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t{font-weight:600;font-size:18px}
+.s{color:var(--muted);font-size:14px;margin-top:3px}
+.pg{text-align:right;font-size:17px;font-variant-numeric:tabular-nums}
+.pg span{color:var(--muted)}
+.bar{height:10px;border-radius:99px;background:color-mix(in srgb,var(--c) 18%,var(--surface));margin-top:14px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--c);border-radius:99px;transition:width .4s}
+.meta{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-top:8px}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:80px 24px}
+.empty b{display:block;color:var(--text);font-size:18px;margin-bottom:6px}
+nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);display:flex;gap:4px;padding:5px;border-radius:99px;background:var(--surface);border:1px solid color-mix(in srgb,var(--text) 8%,transparent);box-shadow:0 8px 30px #0006}
+nav button{border:0;background:none;border-radius:99px;padding:11px 20px;font-weight:600;color:var(--muted)}
+nav button.on{background:color-mix(in srgb,var(--text) 16%,var(--surface));color:var(--text)}
+nav small{opacity:.7;margin-left:4px}
+.ov{position:fixed;inset:0;background:#0009;display:flex;align-items:flex-end;justify-content:center;z-index:10;animation:f .2s}
+.sh{width:100%;max-width:560px;max-height:93%;overflow:auto;background:var(--bg);border-radius:28px 28px 0 0;padding:16px 16px calc(env(safe-area-inset-bottom,0px) + 22px);animation:u .25s}
+@keyframes f{from{opacity:0}}
+@keyframes u{from{transform:translateY(40px);opacity:0}}
+@media(prefers-reduced-motion:reduce){.ov,.sh{animation:none}.bar i{transition:none}}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.top h2{font-size:18px;margin:0}
+.pill{border:0;border-radius:99px;padding:13px 22px;background:var(--surface2);color:var(--muted);font-weight:600}
+.pill.go{background:var(--accent);color:#04130a}
+.pill:disabled{opacity:.5;cursor:default;background:var(--surface2);color:var(--muted)}
+.link{display:block;margin:10px auto 0;background:none;border:0;color:var(--accent);padding:6px}
+.inp{width:100%;border:0;border-radius:99px;background:var(--surface);color:var(--text);font:inherit;padding:18px 22px;outline:0;margin-top:12px}
+.lbl{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:24px 6px 8px}
+.grp{background:var(--surface);border-radius:24px;overflow:hidden}
+.fld{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 20px;border:0;width:100%;background:none;text-align:left}
+.fld+.fld{border-top:1px solid color-mix(in srgb,var(--text) 7%,transparent)}
+.fld input{background:none;border:0;color:var(--text);font:inherit;text-align:right;min-width:0;width:100%;outline:0}
+.fld.red{color:var(--danger)}
+.note{color:var(--muted);font-size:14px;margin:8px 8px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:10px;padding:16px}
+.dot{aspect-ratio:1;border-radius:50%;border:0;display:grid;place-items:center;color:#fff;padding:0}
+.dot svg{width:55%;height:55%}
+.pick{aspect-ratio:1;border-radius:14px;border:2px solid transparent;background:var(--surface2);display:grid;place-items:center;color:var(--text);padding:0}
+.pick svg{width:55%;height:55%}
+.pick.on{border-color:var(--c);color:var(--c)}
+.big{display:flex;align-items:baseline;justify-content:center;gap:8px;margin:20px 0 4px;font-variant-numeric:tabular-nums}
+.big input{width:4.6ch;font:inherit;font-size:48px;font-weight:700;text-align:right;background:none;border:0;border-bottom:2px solid var(--c);color:var(--text);outline:0;padding:0}
+.big span{font-size:20px;color:var(--muted)}
+.cap{text-align:center;color:var(--muted);font-size:14px}
+.step{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0 10px}
+.step button{border:0;border-radius:16px;background:var(--surface);padding:15px 0;font-weight:600}
+input[type=range]{width:100%;accent-color:var(--c);margin:10px 0 4px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--surface);border-radius:22px;padding:18px}
+.stat b{display:block;font-size:30px;font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:14px}
+.stat.w{grid-column:span 2}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 16px);transform:translateX(-50%);background:var(--surface2);padding:12px 20px;border-radius:99px;z-index:20;font-weight:600;box-shadow:0 8px 30px #0006}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(min-width:700px){.ov{align-items:center}.sh{border-radius:28px;max-height:90%}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <button class="ib" id="bSet" aria-label="Settings"></button>
+    <span class="sp"></span>
+    <button class="ib" id="bStat" aria-label="Statistics"></button>
+    <button class="ib go" id="bAdd" aria-label="Add book"></button>
+  </header>
+  <main id="list"></main>
+</div>
+<nav>
+  <button id="tR">Reading<small></small></button>
+  <button id="tC">Completed<small></small></button>
+</nav>
+<script>
+const $=s=>document.querySelector(s), K='pagewise.v1';
+let S={books:[]}, tab='reading';
+try{S=JSON.parse(localStorage.getItem(K))||S}catch(e){}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+const COLORS=['#ef4444','#ea6a12','#d4881a','#b8890f','#6f9a14','#1fa84f','#1fa371','#1b9d9d','#1a9fb5','#1b95db','#4b83f5','#7c7cf8','#9b6cf9','#b655f5','#e63de6','#f03ba8','#f43f6e','#b88a68','#7f93ad','#9a9484'];
+const ICONS={
+open:'<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>',
+book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M20 17v4H6.5a2.5 2.5 0 0 1 0-4"/>',
+bookmark:'<path d="M6 3h12v18l-6-4-6 4z"/>',
+star:'<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"/>',
+heart:'<path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z"/>',
+moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>',
+flame:'<path d="M12 22c4 0 7-3 7-7 0-4-3-6-4-10-3 2-4 5-4 7-1-1-2-2-2-4-2 2-4 5-4 8 0 4 3 6 7 6z"/>',
+globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
+rocket:'<path d="M12 3c4 2 6 6 5 11l-3 3h-4l-3-3c-1-5 1-9 5-11z"/><circle cx="12" cy="10" r="1.5"/><path d="M9 17l-2 4M15 17l2 4"/>',
+idea:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>',
+pen:'<path d="M4 20l1-4L16 5a2.1 2.1 0 0 1 3 3L8 19z"/>',
+code:'<path d="m8 8-5 4 5 4M16 8l5 4-5 4M14 5l-4 14"/>',
+music:'<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
+flask:'<path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/>',
+landmark:'<path d="M3 21h18M5 21V10M10 21V10M14 21V10M19 21V10M2 10l10-6 10 6z"/>',
+grad:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c3 2.5 9 2.5 12 0v-4.5"/>',
+coffee:'<path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 10h2a2 2 0 0 1 0 4h-2M8 3v2M12 3v2"/>',
+leaf:'<path d="M5 19C4 9 10 4 20 4c0 10-5 16-13 15zM5 19c3-5 6-8 10-10"/>',
+ghost:'<path d="M5 21V11a7 7 0 0 1 14 0v10l-3.5-2-3.5 2-3.5-2z"/><circle cx="9.5" cy="11" r=".8"/><circle cx="14.5" cy="11" r=".8"/>',
+crown:'<path d="M3 18 2 7l6 5 4-8 4 8 6-5-1 11z"/>'
+};
+const GEAR=(()=>{let d='';for(let i=0;i<8;i++)[[-.3,7.4],[-.17,9.6],[.17,9.6],[.3,7.4]].forEach(([o,r])=>{const t=i*Math.PI/4+o;d+=(d?'L':'M')+(12+r*Math.cos(t)).toFixed(2)+' '+(12+r*Math.sin(t)).toFixed(2)});return d+'Z'})();
+const UI={
+gear:'<path d="'+GEAR+'"/><circle cx="12" cy="12" r="3"/>',
+bars:'<path d="M6 20V10M12 20V4M18 20v-7"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',
+x:'<path d="M6 6l12 12M18 6 6 18"/>',
+check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>'
+};
+const svg=(p,w=1.8)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const ic=n=>svg(ICONS[n]||ICONS.open), ui=n=>svg(UI[n],2.2);
+const fmtDate=t=>new Date(t).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});
+
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),2200)}
+function sheet(html,init){
+  const o=document.createElement('div');o.className='ov';
+  o.innerHTML=`<div class="sh" role="dialog" aria-modal="true">${html}</div>`;
+  document.body.append(o);
+  const close=()=>o.remove();
+  o.onclick=e=>{if(e.target===o)close()};
+  o.querySelectorAll('[data-x]').forEach(b=>b.onclick=close);
+  init&&init(o,close);
+}
+function setRead(b,n){
+  const was=!!b.done;
+  b.read=clamp(Math.round(n)||0,0,b.total);
+  if(b.read>=b.total){if(!b.done)b.done=Date.now()}else b.done=null;
+  save();render();
+  if(!was&&b.done)toast('Finished! Moved to Completed');
+}
+
+function card(b){
+  const p=b.total?clamp(b.read/b.total*100,0,100):0;
+  const meta=b.done?`Finished ${fmtDate(b.done)}`:`${b.total-b.read} pages left`;
+  return `<button class="card${b.done?' done':''}" data-id="${b.id}" style="--c:${b.color}">
+    <div class="row"><div class="tile">${ic(b.icon)}</div>
+    <div class="info"><div class="t">${esc(b.title)}</div><div class="s">${esc(b.author||'Unknown author')}</div></div>
+    <div class="pg">${b.read}<span>/${b.total}</span></div></div>
+    <div class="bar"><i style="width:${p}%"></i></div>
+    <div class="meta"><span>${meta}</span><span>${p.toFixed(1)}%</span></div></button>`;
+}
+function render(){
+  const r=S.books.filter(b=>!b.done), c=S.books.filter(b=>b.done).sort((a,b)=>b.done-a.done);
+  const list=tab==='reading'?r:c;
+  $('#list').innerHTML=list.length?list.map(card).join(''):
+    tab==='reading'?'<div class="empty"><b>No books in progress</b>Tap + to add the book you’re reading.</div>'
+    :'<div class="empty"><b>Nothing finished yet</b>Books move here once you reach the last page.</div>';
+  $('#tR').className=tab==='reading'?'on':'';$('#tC').className=tab==='completed'?'on':'';
+  $('#tR small').textContent=r.length;$('#tC small').textContent=c.length;
+  $('#list').querySelectorAll('.card').forEach(el=>el.onclick=()=>progress(el.dataset.id));
+}
+
+function progress(id){
+  const b=S.books.find(x=>x.id===id); if(!b)return;
+  let v=b.read;
+  sheet(`<div style="--c:${b.color}">
+    <div class="top"><button class="ib" data-x aria-label="Close">${ui('x')}</button><h2>Update progress</h2><button class="pill go" id="ok">Save</button></div>
+    <div class="tile lg">${ic(b.icon)}</div>
+    <div class="cap" style="margin-top:12px"><b style="color:var(--text);font-size:18px">${esc(b.title)}</b><br>${esc(b.author||'Unknown author')}</div>
+    <div class="big"><input id="n" type="number" inputmode="numeric" min="0" max="${b.total}"><span>/ ${b.total} pages</span></div>
+    <div class="cap" id="pc"></div>
+    <input type="range" id="r" min="0" max="${b.total}" step="1">
+    <div class="step"><button data-d="-10">−10</button><button data-d="-1">−1</button><button data-d="1">+1</button><button data-d="10">+10</button></div>
+    <button class="pill" id="fin" style="width:100%">Mark as finished</button>
+    <div class="lbl">Book</div>
+    <div class="grp"><button class="fld" id="ed">Edit details</button><button class="fld red" id="rm">Remove book</button></div></div>`,
+  (o,close)=>{
+    const n=o.querySelector('#n'),r=o.querySelector('#r');
+    const sync=()=>{v=clamp(Math.round(v)||0,0,b.total);n.value=v;r.value=v;o.querySelector('#pc').textContent=(v/b.total*100).toFixed(1)+'% read · '+(b.total-v)+' left'};
+    sync();
+    n.oninput=()=>{v=+n.value;r.value=clamp(v,0,b.total);o.querySelector('#pc').textContent=(clamp(v,0,b.total)/b.total*100).toFixed(1)+'% read'};
+    n.onblur=sync;
+    r.oninput=()=>{v=+r.value;sync()};
+    o.querySelectorAll('[data-d]').forEach(x=>x.onclick=()=>{v=(+n.value||0)+ +x.dataset.d;sync()});
+    o.querySelector('#fin').onclick=()=>{v=b.total;sync()};
+    o.querySelector('#ok').onclick=()=>{setRead(b,+n.value);close()};
+    o.querySelector('#ed').onclick=()=>{close();form(b)};
+    o.querySelector('#rm').onclick=()=>{if(confirm(`Remove “${b.title}”? This can’t be undone.`)){S.books=S.books.filter(x=>x.id!==b.id);save();render();close()}};
+  });
+}
+
+function form(b){
+  const f=b?{...b}:{title:'',author:'',total:'',read:0,color:COLORS[10],icon:'open'};
+  let showIcons=false;
+  sheet(`<div id="fm">
+    <div class="top"><button class="ib" data-x aria-label="Close">${ui('x')}</button><h2>${b?'Edit book':'New book'}</h2><button class="pill go" id="ok">${b?'Save':'Add'}</button></div>
+    <div class="tile lg" id="pv"></div>
+    <button class="link" id="ci">Change icon</button>
+    <div class="grp" id="ig" hidden style="margin-top:12px"><div class="grid" id="igr"></div></div>
+    <input class="inp" id="t" placeholder="Book title" maxlength="80" autocomplete="off">
+    <input class="inp" id="a" placeholder="Author" maxlength="60" autocomplete="off">
+    <div class="lbl">Color</div><div class="grp"><div class="grid" id="cg"></div></div>
+    <div class="lbl">Pages</div>
+    <div class="grp"><label class="fld">Total pages<input id="tp" type="number" inputmode="numeric" min="1" placeholder="0"></label>
+    <label class="fld">Pages read<input id="pr" type="number" inputmode="numeric" min="0" placeholder="0"></label></div>
+    <p class="note">Reaching the last page moves the book to Completed.</p></div>`,
+  (o,close)=>{
+    const q=s=>o.querySelector(s);
+    q('#t').value=f.title;q('#a').value=f.author;q('#tp').value=f.total;q('#pr').value=f.read;
+    const paint=()=>{
+      o.firstChild.style.setProperty('--c',f.color);
+      q('#pv').style.setProperty('--c',f.color);q('#pv').innerHTML=ic(f.icon);
+      q('#cg').innerHTML=COLORS.map(c=>`<button class="dot" data-c="${c}" style="background:${c}" aria-label="Color ${c}">${c===f.color?ui('check'):''}</button>`).join('');
+      q('#igr').innerHTML=Object.keys(ICONS).map(n=>`<button class="pick${n===f.icon?' on':''}" data-i="${n}" aria-label="${n}">${ic(n)}</button>`).join('');
+      q('#ig').hidden=!showIcons;
+      q('#cg').querySelectorAll('.dot').forEach(x=>x.onclick=()=>{f.color=x.dataset.c;paint()});
+      q('#igr').querySelectorAll('.pick').forEach(x=>x.onclick=()=>{f.icon=x.dataset.i;paint()});
+      check();
+    };
+    const check=()=>{q('#ok').disabled=!(q('#t').value.trim()&&+q('#tp').value>0)};
+    q('#ci').onclick=()=>{showIcons=!showIcons;paint()};
+    ['#t','#tp'].forEach(s=>q(s).oninput=check);
+    q('#ok').onclick=()=>{
+      const total=Math.round(+q('#tp').value);
+      const d={title:q('#t').value.trim(),author:q('#a').value.trim(),total,color:f.color,icon:f.icon};
+      const read=clamp(Math.round(+q('#pr').value)||0,0,total);
+      if(b){Object.assign(b,d);setRead(b,read)}
+      else{const nb={id:uid(),added:Date.now(),done:null,read:0,...d};S.books.unshift(nb);tab='reading';setRead(nb,read)}
+      close();
+    };
+    paint();
+    if(!b)q('#t').focus();
+  });
+}
+
+function stats(){
+  const pages=S.books.reduce((s,b)=>s+b.read,0), done=S.books.filter(b=>b.done).length, cur=S.books.length-done;
+  sheet(`<div class="top"><button class="ib" data-x aria-label="Close">${ui('x')}</button><h2>Statistics</h2><span style="width:46px"></span></div>
+    <div class="stats"><div class="stat w"><b>${pages.toLocaleString()}</b><span>Pages read in total</span></div>
+    <div class="stat"><b>${done}</b><span>Books completed</span></div>
+    <div class="stat"><b>${cur}</b><span>In progress</span></div></div>`);
+}
+
+function settings(){
+  sheet(`<div class="top"><button class="ib" data-x aria-label="Close">${ui('x')}</button><h2>Settings</h2><span style="width:46px"></span></div>
+    <div class="lbl" style="margin-top:0">Data</div>
+    <div class="grp"><button class="fld" id="ex">Export backup</button><button class="fld" id="im">Import backup</button><button class="fld red" id="del">Delete all data</button></div>
+    <p class="note">Everything is stored on this device and works offline. A backup is a JSON file with all your books, handy for moving to another device.</p>
+    <input type="file" id="file" accept="application/json,.json" hidden>`,
+  (o,close)=>{
+    o.querySelector('#ex').onclick=()=>{
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:'application/json'}));
+      a.download='pagewise-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);
+    };
+    const fi=o.querySelector('#file');
+    o.querySelector('#im').onclick=()=>fi.click();
+    fi.onchange=async()=>{
+      try{
+        const d=JSON.parse(await fi.files[0].text());
+        if(!Array.isArray(d.books))throw 0;
+        if(!confirm(`Replace your current library with ${d.books.length} book(s) from this backup?`))return;
+        S={books:d.books.filter(b=>b&&b.title&&b.total>0).map(b=>({id:b.id||uid(),added:b.added||Date.now(),done:b.done||null,read:clamp(+b.read||0,0,+b.total),title:String(b.title),author:String(b.author||''),total:+b.total,color:b.color||COLORS[10],icon:b.icon||'open'}))};
+        save();render();close();toast('Backup imported');
+      }catch(e){toast('That file isn’t a valid backup')}
+    };
+    o.querySelector('#del').onclick=()=>{if(confirm('Delete all books and progress? This can’t be undone.')){S={books:[]};save();render();close()}};
+  });
+}
+
+$('#bSet').innerHTML=ui('gear');$('#bStat').innerHTML=ui('bars');$('#bAdd').innerHTML=ui('plus');
+$('#bSet').onclick=settings;$('#bStat').onclick=stats;$('#bAdd').onclick=()=>form();
+$('#tR').onclick=()=>{tab='reading';render()};$('#tC').onclick=()=>{tab='completed';render()};
+render();
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
